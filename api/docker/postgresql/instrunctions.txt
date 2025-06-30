@@ -1,0 +1,6 @@
+docker run -d \
+  --name dev-backend-db \
+  --env-file backend.env \
+  -p 5432:5432 \
+  -v backend_pgdata:/var/lib/postgresql/data \
+  dev-postgres-image

@@ -1,0 +1,227 @@
+:root {
+  color-scheme: light;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #f5f5f5;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+}
+
+
+* {
+  box-sizing: border-box
+}
+
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+hr.solid {
+  border-top: 2px solid #000;
+}
+
+input[type=text],
+input[type=number],
+input[type=email] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: 1px stroke black;
+  background: #f1f1f1;
+}
+
+input[type=text]:focus,
+input[type=number]:focus,
+input[type=email]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Remove spins para controlar campos numéricos */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove spins para controlar campos numéricos */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.form-row-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.form-row-group label {
+  flex-basis: 100px; /* Dá uma largura base para a label. Ajuste conforme necessário. */
+  min-width: 130px; /* Garante que a label tenha um tamanho mínimo */
+  margin-right: 15px; /* Espaçamento entre a label e o input */
+  text-align: left; /* Alinha o texto da label à direita, para separar visualmente do input */
+  /* Remova qualquer margin-bottom que possa estar empurrando o input para baixo */
+  margin-bottom: 0;
+}
+
+.form-row-group input {
+  flex-grow: 1; /* Permite que o input ocupe todo o espaço restante disponível */
+  width: auto; /* Sobrescreve o width: 100% que poderia vir de uma regra mais geral */
+  margin: 0; /* Zera as margens do input para que o espaçamento seja controlado pelo .form-row-group */
+}
+
+/* Referente aos inputs alinhados na mesma linha do formulário */
+.grouped-fields {
+  display: grid; /* Transforma o contêiner em um Grid Container */
+  grid-template-columns: 5fr 2fr;
+  gap: 20px; /* Espaçamento entre as colunas e entre as linhas (se houver mais linhas) */
+  margin-bottom: 20px; /* Espaço abaixo deste grupo de campos */
+}
+
+
+/* Alterar fieldset e legend do Formulário */
+fieldset {
+  border: 1px solid #ccc; /* Uma borda para o fieldset */
+  padding: 20px; /* Espaçamento interno */
+  margin-bottom: 20px; /* Espaço abaixo do fieldset */
+  border-radius: 5px; /* Cantos levemente arredondados */
+}
+
+/* Estilo para o legend com fundo azul claro */
+legend {
+  background-color: #f5f5f5;
+  padding: 5px 10px; /* Espaçamento interno para o texto do legend */
+  border-color: hsl(0, 0%, 0%);
+  border-width: 1px;
+  border-style: solid;
+  color: #333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #000;
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+thead {
+  background-color: #f2f2f2; /* Cor de fundo para o cabeçalho */
+}
+
+button {
+  background-color: #0d6efd; /* Cor de fundo Bootstrap Primary */
+  color: #fff;              /* Cor Bootstrap Primary*/
+  border: none;              /* Remove a borda padrão do botão */
+  padding: 12px 35px;  
+  margin-bottom: 10px;
+  margin-left: 5px;
+  margin-top: 10px;
+  border-radius: 15px;        /* Bordas arredondadas */
+  cursor: pointer;           /* Muda o cursor para indicar que é clicável */
+  font-size: 16px;           /* Tamanho da fonte */
+  transition: background-color 0.3s ease; /* Transição suave para o hover */
+}
+
+button:hover {
+  background-color: #0b5ed7; /* Um tom ligeiramente mais escuro ao passar o mouse */
+}
+
+button:active {
+  background-color: #0a58ca; /* Um tom ainda mais escuro ao clicar */
+}
+
+
+
+.action-icon {
+  font-size: 3.0em;
+  margin: 0 5px;
+  cursor: pointer;
+  color: #6c757d;
+  transition: color 0.2s ease, transform 0.2s ease;
+  vertical-align: middle;
+}
+
+.action-icon:hover {
+  color: #0d6efd;
+  transform: scale(1.1);
+}
+
+/* Alinhar textos ao centro. Usado na tabela */
+.text-center {
+  text-align: center;
+}
+
+.container {
+  border: black;
+  border-width: 2px;
+  border-style: inset;
+  margin-bottom: 25px;
+}
+
+.area-form {
+  padding-left: 25px;
+}
+
+.area-search {
+  margin-left: 20px;
+}
+
+.area-lists {
+  color: #000;
+  margin-left: 20px;
+  margin-bottom: 30px;
+}
+
+.area-search-header {
+  font-size: 1.5em;
+  margin-top: 0.83em;
+  margin-bottom: 0.83em; 
+}
+
+.details-text-area{
+  display: flex;
+  align-items: center;
+  margin-right: 30px;
+}
+
+/* Label de CPF em Consultar Pessoas Integradas */
+label[for="cpfConsulta"] {
+  margin-right: 10px;
+}
+
+.details-container-grid {
+  margin-left: 10px;
+  display: grid; /* Transforma o div em um contêiner Grid */
+  grid-template-columns: auto 1fr;
+  gap: 10px 15px; /* Define o espaçamento entre as linhas (10px) e entre as colunas (15px) */
+  width: 100%; /* Ocupa a largura total do seu contêiner pai */
+  max-width: 500px; /* Opcional: define uma largura máxima para o bloco, ajuste conforme seu layout */
+}
+
+/* Estilo para todas as labels dentro do Grid */
+.details-container-grid .details-label {
+  font-weight: bold; /* Deixa o label em negrito */
+  text-align: left; /* Alinha o texto da label à direita, encostando no valor */
+  padding-right: 5px; /* Pequeno espaçamento à direita da label */
+  white-space: nowrap; /* Impede que o texto da label quebre para a próxima linha */
+}
+
+/* Estilo para todos os valores (details-value) dentro do Grid */
+.details-container-grid .details-value {
+  text-align: left; /* Garante que o valor esteja alinhado à esquerda dentro de sua célula */
+}

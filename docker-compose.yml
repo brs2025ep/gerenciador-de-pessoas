@@ -1,0 +1,63 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./backend/backend.env
+    depends_on:
+      - backend-db
+      - api
+    volumes:
+    - backend_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s 
+      retries: 5
+      start_period: 40s
+
+  backend-db:
+    image: postgres:14
+    env_file:
+      - ./backend/backend.env
+    volumes:
+      - backend_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    env_file:
+      - ./api/api.env
+    depends_on:
+      - api-db
+    volumes:
+      - api_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s 
+      retries: 5
+      start_period: 40s
+  
+  api-db:
+    image: postgres:14
+    env_file:
+      - ./api/api.env
+    volumes:
+      - api_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+volumes:
+  backend_pgdata:
+  api_pgdata:
+  api_logs:
+  backend_logs:
