@@ -1,5 +1,6 @@
 package com.example.backend.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,29 +18,24 @@ public class Endereco {
     @Column(name = "idPessoa")
     private Integer id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @MapsId
     @JoinColumn(name = "idPessoa")
+    @JsonBackReference
     private Pessoa pessoa;
 
+    @Column(nullable = true)
     private Integer cep;
 
+    @Column(nullable = true)
     private String rua;
 
+    @Column(nullable = true)
     private Integer numero;
 
+    @Column(nullable = true)
     private String cidade;
 
+    @Column(nullable = true)
     private String estado;
-
-    public static Endereco createDefaultEndereco() {
-        Endereco defaultEndereco = new Endereco();
-        defaultEndereco.setCep(0);
-        defaultEndereco.setRua("");
-        defaultEndereco.setNumero(0);
-        defaultEndereco.setCidade("");
-        defaultEndereco.setEstado("");
-
-        return defaultEndereco;
-    }
 }
