@@ -2,9 +2,11 @@ package com.example.backend.infrastructure.dto;
 
 import com.example.backend.domain.model.Pessoa;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Getter
 @Setter
 @NoArgsConstructor
@@ -39,9 +41,7 @@ public class PessoaResponse {
             try {
                 pessoaResponseBuilder.situacaoIntegracao(domain.getSituacaoIntegracao().toString());
             } catch (IllegalArgumentException e) {
-                // Log the issue, or throw a specific exception if an invalid enum value is critical
-                System.err.println("Invalid SituacaoIntegracao value received: " + domain.getSituacaoIntegracao());
-                // Optionally, handle this by setting a default or re-throwing
+                log.warn("Invalid SituacaoIntegracao value encountered in domain model: {}", domain.getSituacaoIntegracao(), e);
             }
         }
 
