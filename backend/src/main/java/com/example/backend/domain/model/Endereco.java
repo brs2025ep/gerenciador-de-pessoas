@@ -2,6 +2,7 @@ package com.example.backend.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class Endereco {
     private Pessoa pessoa;
 
     @Column(nullable = true)
+    @Size(min = 8, max = 8, message = "O CEP deve ter 8 dígitos.")
     private Integer cep;
 
     @Column(nullable = true)

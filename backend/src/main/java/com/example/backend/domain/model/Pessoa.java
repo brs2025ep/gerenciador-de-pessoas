@@ -1,13 +1,16 @@
 package com.example.backend.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -24,9 +27,11 @@ public class Pessoa {
     private String nome;
 
     @Column(nullable = true)
-    private LocalDateTime nascimento;
+    @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
+    private LocalDate nascimento;
 
     @Column(unique = true, nullable = true)
+    @Size(min = 11, max = 11, message = "O CPF deve ter 11 caracteres.")
     private String cpf;
 
     @Column(nullable = true)

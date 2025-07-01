@@ -1,12 +1,13 @@
 package com.example.backend.infrastructure.dto;
 
-import com.example.backend.domain.model.Endereco;
 import com.example.backend.domain.model.Pessoa;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -17,10 +18,13 @@ public class PessoaRequest {
     @NotBlank(message = "É obrigatório ter nome da Pessoa")
     private String nome;
 
-    private LocalDateTime nascimento;
+    @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
+    private LocalDate nascimento;
 
+    @Size(min = 11, max = 11, message = "O CPF deve ter 11 caracteres.")
     private String cpf;
 
+    @Email(message = "Email format is invalid")
     private String email;
 
     private EnderecoRequest endereco;

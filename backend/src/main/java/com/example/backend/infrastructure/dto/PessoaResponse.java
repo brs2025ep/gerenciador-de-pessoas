@@ -4,7 +4,7 @@ import com.example.backend.domain.model.Pessoa;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Slf4j
 @Getter
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class PessoaResponse {
     private Integer id;
     private String nome;
-    private LocalDateTime nascimento;
+    private LocalDate nascimento;
     private String cpf;
     private String email;
     private EnderecoResponse endereco;
