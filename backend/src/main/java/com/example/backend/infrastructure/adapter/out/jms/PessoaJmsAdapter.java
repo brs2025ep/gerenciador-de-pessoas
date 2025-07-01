@@ -20,7 +20,7 @@ public class PessoaJmsAdapter implements PessoaEventPort {
     public void sendPessoaForValidation(Pessoa pessoa) {
         try {
             String pessoaJson = objectMapper.writeValueAsString(pessoa);
-            jmsTemplate.convertAndSend("pessoa.validation.queue", pessoaJson);
+            jmsTemplate.convertAndSend("integracao.queue", pessoaJson);
             log.info("Pessoa de ID {}  foi enviada para a fila JMS 'pessoa.validation.queue'.", pessoa.getId());
         } catch (Exception e) {
             log.error("Ocorreu um Erro ao enviar produto de ID {} para fila interna: {}", pessoa.getId(), e.getMessage(), e);
