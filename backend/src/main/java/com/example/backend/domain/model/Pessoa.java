@@ -1,5 +1,6 @@
 package com.example.backend.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +34,7 @@ public class Pessoa {
 
     @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @PrimaryKeyJoinColumn
+    @JsonManagedReference
     private Endereco endereco;
 
     @Enumerated(EnumType.STRING)
@@ -40,12 +42,9 @@ public class Pessoa {
     private SituacaoIntegracao situacaoIntegracao = SituacaoIntegracao.PENDENTE;
 
     public void setEndereco(Endereco endereco) {
-        if (endereco == null) {
-            this.endereco = Endereco.createDefaultEndereco();
-            this.endereco.setPessoa(this);
-        } else {
-            this.endereco = endereco;
-            this.endereco.setPessoa(this);
+        this.endereco = endereco;
+        if (endereco != null) {
+            endereco.setPessoa(this);
         }
     }
 }
