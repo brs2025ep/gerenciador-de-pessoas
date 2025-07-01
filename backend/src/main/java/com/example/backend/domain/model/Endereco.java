@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Endereco {
 
@@ -31,6 +33,13 @@ public class Endereco {
     private String estado;
 
     public static Endereco createDefaultEndereco() {
-        return new Endereco(null, null, 0, "", 0, "", "");
+        Endereco defaultEndereco = new Endereco();
+        defaultEndereco.setCep(0);
+        defaultEndereco.setRua("");
+        defaultEndereco.setNumero(0);
+        defaultEndereco.setCidade("");
+        defaultEndereco.setEstado("");
+
+        return defaultEndereco;
     }
 }
