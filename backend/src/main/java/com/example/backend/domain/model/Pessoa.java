@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Entity
 @Data
 @Builder
 public class Pessoa {
@@ -31,6 +32,7 @@ public class Pessoa {
     private Endereco endereco;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private SituacaoIntegracao situacaoIntegracao = SituacaoIntegracao.PENDENTE;
 
     public void setEndereco(Endereco endereco) {
