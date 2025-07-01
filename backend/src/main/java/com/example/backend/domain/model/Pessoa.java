@@ -43,14 +43,9 @@ public class Pessoa {
         if (endereco == null) {
             this.endereco = Endereco.createDefaultEndereco();
             this.endereco.setPessoa(this);
-            this.endereco.setId(this.id);
         } else {
             this.endereco = endereco;
             this.endereco.setPessoa(this);
-
-            if (this.id != null && this.endereco.getId() == null) {
-                this.endereco.setId(this.id);
-            }
         }
     }
 }
