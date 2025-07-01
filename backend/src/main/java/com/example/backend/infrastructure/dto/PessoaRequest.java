@@ -25,9 +25,6 @@ public class PessoaRequest {
 
     private EnderecoRequest endereco;
 
-    private String situacaoIntegracao;
-
-
     /**
      * Converter a PessoaRequest DTO em model Pessoa.
      * @return Pessoa retorno do domain model.
@@ -41,16 +38,6 @@ public class PessoaRequest {
 
         if (this.endereco != null) {
             pessoaBuilder.endereco(this.endereco.toDomain());
-        }
-
-        if (this.situacaoIntegracao != null) {
-            try {
-                pessoaBuilder.situacaoIntegracao(com.example.backend.domain.model.SituacaoIntegracao.valueOf(this.situacaoIntegracao.toUpperCase()));
-            } catch (IllegalArgumentException e) {
-                // Log the issue, or throw a specific exception if an invalid enum value is critical
-                System.err.println("Invalid SituacaoIntegracao value received: " + this.situacaoIntegracao);
-                // Optionally, handle this by setting a default or re-throwing
-            }
         }
 
         return pessoaBuilder.build();
