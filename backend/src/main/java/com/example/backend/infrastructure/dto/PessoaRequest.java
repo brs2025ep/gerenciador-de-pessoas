@@ -14,8 +14,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class PessoaRequest {
-    private Integer id;
-
     @NotBlank(message = "É obrigatório ter nome da Pessoa")
     private String nome;
 
@@ -35,11 +33,27 @@ public class PessoaRequest {
      * @return Pessoa retorno do domain model.
      */
     public Pessoa toDomain() {
-        return Pessoa.builder()
-                .id(this.id)
+        Pessoa.PessoaBuilder pessoaBuilder = Pessoa.builder()
                 .nome(this.nome)
-                .endereco(this.endereco != null ? this.endereco.toDomain() : null)
-                .build();
+                .nascimento(this.nascimento)
+                .cpf(this.cpf)
+                .email(this.email);
+
+        if (this.endereco != null) {
+            pessoaBuilder.endereco(this.endereco.toDomain());
+        }
+
+        if (this.situacaoIntegracao != null) {
+            try {
+                pessoaBuilder.situacaoIntegracao(com.example.backend.domain.model.SituacaoIntegracao.valueOf(this.situacaoIntegracao.toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                // Log the issue, or throw a specific exception if an invalid enum value is critical
+                System.err.println("Invalid SituacaoIntegracao value received: " + this.situacaoIntegracao);
+                // Optionally, handle this by setting a default or re-throwing
+            }
+        }
+
+        return pessoaBuilder.build();
     }
 
 }
