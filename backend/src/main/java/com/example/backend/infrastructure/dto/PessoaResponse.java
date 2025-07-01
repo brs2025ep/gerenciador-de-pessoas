@@ -3,6 +3,8 @@ package com.example.backend.infrastructure.dto;
 import com.example.backend.domain.model.Pessoa;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -11,6 +13,7 @@ import lombok.*;
 public class PessoaResponse {
     private Integer id;
     private String nome;
+    private LocalDateTime nascimento;
     private String cpf;
     private String email;
     private EnderecoResponse endereco;
@@ -27,6 +30,7 @@ public class PessoaResponse {
                 .cpf(domain.getCpf())
                 .email(domain.getEmail())
                 .endereco(domain.getEndereco() != null ? EnderecoResponse.fromDomain(domain.getEndereco()) : null)
+                .nascimento(domain.getNascimento())
                 .build();
     }
 }
