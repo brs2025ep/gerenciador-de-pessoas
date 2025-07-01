@@ -22,9 +22,9 @@ public class ProductValidationListener {
     private final PessoaRepository pessoaRepository;
 
     @Value("${api.url}")
-    private final String apiUrl;
+    private String apiUrl;
 
-    @JmsListener(destination = "pessoa.validation.queue")
+    @JmsListener(destination = "integracao.queue")
     public void receivePessoaForValidation(String pessoaJson) {
         try {
             Pessoa pessoa = objectMapper.readValue(pessoaJson, Pessoa.class);
