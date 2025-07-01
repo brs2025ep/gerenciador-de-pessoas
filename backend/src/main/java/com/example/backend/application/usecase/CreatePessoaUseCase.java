@@ -1,6 +1,7 @@
 package com.example.backend.application.usecase;
 
 import com.example.backend.application.port.out.PessoaEventPort;
+import com.example.backend.domain.model.Endereco;
 import com.example.backend.domain.model.Pessoa;
 import com.example.backend.domain.repository.PessoaRepository;
 import com.example.backend.infrastructure.adapter.in.web.exception.ResourceAlreadyExistsException;
@@ -27,6 +28,11 @@ public class CreatePessoaUseCase {
         if (pessoa.getCpf() != null && pessoaRepository.existsByCpf(pessoa.getCpf())) {
             throw new ResourceAlreadyExistsException("Já existe uma pessoa cadastrada com este CPF.");
         }
+        Endereco endereco = pessoa.getEndereco();
+        endereco.setPessoa(null);
+        endereco.setId(null);
+
+        pessoa.setEndereco(endereco);
 
         Pessoa createdPessoa = pessoaRepository.save(pessoa);
         log.info("Pessoa criada. (id: {}, nome: {})",  createdPessoa.getId(), pessoa.getNome());
