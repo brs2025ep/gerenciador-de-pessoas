@@ -23,3 +23,5 @@ const apiService = {
   getPessoaById: (id) => api.get(`/pessoa/${id}`),
   deletePessoa: (id) => api.delete(`/pessoa/${id}`),
 };
+
+export default apiService;
