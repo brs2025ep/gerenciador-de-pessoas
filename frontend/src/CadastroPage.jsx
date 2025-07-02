@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RiResetLeftFill } from 'react-icons/ri';
+import { FaSearch } from 'react-icons/fa';
 
 const initialPessoaState = {
   id: null,
@@ -17,9 +18,10 @@ const initialPessoaState = {
 const CadastroPage = (
   { pessoaToEdit, onSubmit }
 ) => {
-
-
   const [formData, setFormData] = useState(initialPessoaState);
+  const [errors, setErrors] = useState({});
+  const [showCepSearchIcon, setShowCepSearchIcon] = useState(false);
+
 
   useEffect(() => {
     if (pessoaToEdit) {
@@ -40,14 +42,62 @@ const CadastroPage = (
     }
   }, [pessoaToEdit]);
 
-  const [errors, setErrors] = useState({});
+  const displayCepSearchIcon = () => {
+    setShowCepSearchIcon(true);
+  };
+
+  const hideCepSearchIcon = () => {
+    setShowCepSearchIcon(false);
+  };
 
   const validate = () => {
     const newErrors = {};
-    if (!nome) newErrors.nome = 'Nome é obrigatório';
-    if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Email é inválido';
+    if (!formData.nome.trim()) newErrors.nome = 'Nome é obrigatório';
+
+    if (formData.nascimento.length >= 10) {
+      nascimentoDateValidation(newErrors);
+    }
+
+    if (formData.cpf.trim()) {
+
+      if (formData.cpf.length < 10) {
+        newErrors.cpf = 'CPF inválido';
+      } 
+
+    }
+
+    if (formData.email.trim()) {
+      if (!/\S+@\S+\.\S+/.test(formData.email)) {
+        newErrors.email = 'Email é inválido';
+      }
+    }
+
     return newErrors;
   };
+
+  const nascimentoDateValidation = (newErrors) => {
+    console.log("Teste");
+    const [day, month, year] = formData.nascimento.split('/').map(Number);
+
+    const birthDate = new Date(year, month - 1, day);
+    const currentDate = new Date();
+
+    birthDate.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
+
+    const isValidDate =
+      birthDate.getFullYear() === year &&
+      birthDate.getMonth() === month - 1 &&
+      birthDate.getDate() === day;
+
+    if (!isValidDate) {
+      console.log("Invalid");
+      newErrors.nascimento = 'Data de nascimento inválida';
+    } else if (birthDate > currentDate) {
+      console.log("Valid");
+      newErrors.nascimento = 'Data de nascimento não pode ser no futuro';
+    }
+  }
 
   const resetCadastroForm = () => {
     setFormData(initialPessoaState);
@@ -65,6 +115,86 @@ const CadastroPage = (
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    let formattedValue = value;
+
+    if (name === 'nome') {
+      formattedValue = value
+        .split(' ') // Split the string into an array of words
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize first letter, lowercase rest
+        .join(' '); // Join the words back into a string
+    }
+
+    if (name === 'nascimento') {
+      // Remove all non-digit characters first
+      formattedValue = value.replace(/\D/g, '');
+
+      // Apply formatting
+      if (formattedValue.length > 2) {
+        formattedValue = formattedValue.substring(0, 2) + '/' + formattedValue.substring(2);
+      }
+      if (formattedValue.length > 5) {
+        formattedValue = formattedValue.substring(0, 5) + '/' + formattedValue.substring(5);
+      }
+
+      // Limit to 10 characters (dd/MM/YYYY)
+      if (formattedValue.length > 10) {
+        formattedValue = formattedValue.substring(0, 10);
+      }
+    }
+
+    if (name === 'cep') { // New logic for CEP field
+      // Remove all non-digit characters
+      formattedValue = value.replace(/\D/g, '');
+
+      // Limit to 8 digits
+      if (formattedValue.length > 8) {
+        formattedValue = formattedValue.substring(0, 8);
+      }
+
+      // Apply CEP format (00000-000) only if 8 digits are present
+      if (formattedValue.length === 8) {
+        formattedValue = formattedValue.replace(/(\d{5})(\d{3})/, '$1-$2');
+        displayCepSearchIcon();
+      } else {
+        hideCepSearchIcon();
+      }
+    }
+
+    if (name === 'cpf') {
+      // 1. Remove any non-digit characters
+      const digitsOnly = value.replace(/\D/g, '');
+
+      // 2. Limit to 11 digits
+      const limitedDigits = digitsOnly.substring(0, 11);
+
+      // 3. Apply Brazilian CPF format 000.000.000-00
+      if (limitedDigits.length > 0) {
+        formattedValue = limitedDigits.replace(
+          /^(\d{3})(\d{3})(\d{3})(\d{2})$/,
+          '$1.$2.$3-$4'
+        );
+      } else {
+        formattedValue = '';
+      }
+    }
+
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      [name]: formattedValue
+    }));
+    // Clear the error for the current field as the user types
+    if (errors[name]) {
+      setErrors(prevErrors => {
+        const newErrors = { ...prevErrors };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
   return (
     <div>
       <div className="container area-form">
@@ -78,7 +208,7 @@ const CadastroPage = (
               name="nome"
               value={formData.nome}
               placeholder="Digite o nome. Exemplo: Gonçalves Dias.."
-              onChange={(e) => setNome(e.target.value)}
+              onChange={handleChange}
               required />
             {errors.nome && <p className="text-red-500 text-sm">{errors.nome}</p>}
           </div>
@@ -90,19 +220,19 @@ const CadastroPage = (
               name="nascimento"
               value={formData.nascimento}
               placeholder="Digite a data de nascimento no formato dia/mês/ano. Exemplo: 25/12/1900.."
-              onChange={(e) => setNascimento(e.target.value)}
+              onChange={handleChange}
             />
-            {errors.nome && <p className="text-red-500 text-sm">{errors.nascimento}</p>}
+            {errors.nascimento && <p className="text-red-500 text-sm">{errors.nascimento}</p>}
           </div>
 
           <div className="form-row-group">
             <label className="block font-medium">CPF</label>
             <input
-              type="number"
+              type="text"
               name="cpf"
               value={formData.cpf}
               placeholder="Digite os números do CPF da pessoa..."
-              onChange={(e) => setCpf(e.target.value)}
+              onChange={handleChange}
             />
             {errors.cpf && <p className="text-red-500 text-sm">{errors.cpf}</p>}
           </div>
@@ -113,7 +243,7 @@ const CadastroPage = (
               name="email"
               value={formData.email}
               placeholder="Digite o Email da pessoa..."
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleChange}
             />
             {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </div>
@@ -121,12 +251,22 @@ const CadastroPage = (
             <legend>Endereço</legend>
             <div className="form-row-group">
               <label htmlFor="cep">Cep</label>
-              <input
-                type="number"
-                name="cep"
-                value={formData.cep}
-                placeholder="Digite o CEP da Pessoa.."
-                onChange={(e) => setCep(e.target.value)} />
+              <div className="relative">
+                <input
+                  type="text"
+                  name="cep"
+                  value={formData.cep}
+                  placeholder="Digite o CEP da Pessoa.."
+                  onChange={handleChange} />
+                {showCepSearchIcon && (
+                  <div
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                    onClick={() => alert('Ícone de Busca foi acionado: ' + formData.cep)}
+                  >
+                    <FaSearch /> Buscando
+                  </div>
+                )}
+              </div>
               {errors.cep && <p className="text-red-500 text-sm">{errors.cep}</p>}
             </div>
             <div className="grouped-fields">
@@ -137,7 +277,7 @@ const CadastroPage = (
                   name="rua"
                   value={formData.rua}
                   placeholder="Digita a Rua da Pessoa.."
-                  onChange={(e) => setRua(e.target.value)} />
+                  onChange={handleChange} />
                 {errors.rua && <p className="text-red-500 text-sm">{errors.rua}</p>}
               </div>
               <div className="form-row-group">
@@ -148,7 +288,7 @@ const CadastroPage = (
                   name="numero"
                   value={formData.numero}
                   placeholder="Digite o número da Residência da Pessoa.."
-                  onChange={(e) => setNumero(e.target.value)} />
+                  onChange={handleChange} />
                 {errors.numero && <p className="text-red-500 text-sm">{errors.numero}</p>}
               </div>
             </div>
@@ -160,7 +300,7 @@ const CadastroPage = (
                   name="cidade"
                   value={formData.cidade}
                   placeholder="Digite o nome da Cidade da Pessoa..."
-                  onChange={(e) => setCidade(e.target.value)} />
+                  onChange={handleChange} />
                 {errors.cidade && <p className="text-red-500 text-sm">{errors.cidade}</p>}
               </div>
               <div className="form-row-group">
@@ -170,7 +310,7 @@ const CadastroPage = (
                   name="estado"
                   value={formData.estado}
                   placeholder="Digite o nome do Estado da Pessoa..."
-                  onChange={(e) => setEstado(e.target.value)} />
+                  onChange={handleChange} />
                 {errors.estado && <p className="text-red-500 text-sm">{errors.estado}</p>}
               </div>
             </div>
@@ -188,7 +328,7 @@ const CadastroPage = (
                 className="action-icon"
                 onClick={() => resetCadastroForm()}
                 title="Cancelar a edição"
-              /> 
+              />
             </>
           )}
 

@@ -7,7 +7,7 @@ import PessoasIntegradasSearch from './component/PessoasIntegradasSearch';
 
 function App() {
 
-  const [mockPessoasList, setMockPessoasList] = useState ([
+  const [mockPessoasList, setMockPessoasList] = useState([
     {
       id: 1,
       nome: 'John Doe',
@@ -82,15 +82,15 @@ function App() {
       const newId = Math.max(...mockPessoasList.map((p) => p.id)) + 1;
       setMockPessoasList([...mockPessoasList, { ...editedPessoa, id: newId }]);
     }
-    setWorkerToEdit(null); // Limpa o workerToEdit após a submissão
+    pessoaToEdit(null); // Limpa o workerToEdit após a submissão
   };
 
   return (
     <>
       <div className="container">
         <CadastroPage
-        pessoaToEdit={pessoaToEdit}
-        onSubmit={handleSubmitPessoa}
+          pessoaToEdit={pessoaToEdit}
+          onSubmit={handleSubmitPessoa}
         />
         <PessoasCadastradasList
           pessoas={mockPessoasList}
