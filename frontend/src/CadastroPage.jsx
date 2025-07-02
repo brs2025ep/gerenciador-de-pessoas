@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { RiResetLeftFill } from 'react-icons/ri';
 import { FaSearch } from 'react-icons/fa';
-import apiService from './services/apiService';
 
 const initialPessoaState = {
   id: null,
@@ -62,7 +61,7 @@ const CadastroPage = (
 
       if (formData.cpf.length < 10) {
         newErrors.cpf = 'CPF inválido';
-      } 
+      }
 
     }
 
@@ -76,7 +75,6 @@ const CadastroPage = (
   };
 
   const nascimentoDateValidation = (newErrors) => {
-    console.log("Teste");
     const [day, month, year] = formData.nascimento.split('/').map(Number);
 
     const dataNascimento = new Date(year, month - 1, day);
@@ -91,10 +89,8 @@ const CadastroPage = (
       dataNascimento.getDate() === day;
 
     if (!isValidDate) {
-      console.log("Invalid");
       newErrors.nascimento = 'Data de nascimento inválida';
     } else if (dataNascimento > dataHoje) {
-      console.log("Valid");
       newErrors.nascimento = 'Data de nascimento não pode ser no futuro';
     }
   }
@@ -103,7 +99,7 @@ const CadastroPage = (
     setFormData(initialPessoaState);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     const validationErrors = validate();
@@ -113,25 +109,11 @@ const CadastroPage = (
       setErrors({});
       console.log('Trying to submit Form Data.');
 
-      try {
-        // Determine if we are creating a new pessoa or updating an existing one
-        if (formData.id) {
-          // If formData has an ID, it means we are updating an existing pessoa
-          // await apiService.updatePessoa(formData.id, formData);
-          console.log('Pessoa atualizada:', formData);
-        } else {
-          // Otherwise, we are creating a new pessoa
-          const response = await apiService.createPessoa(formData);
-          console.log('Pessoa cadastrada:', response.data);
-          // Optionally reset the form after successful creation
-          resetCadastroForm();
-        }
-      } catch (error) {
-        console.error('Erro ao salvar pessoa:', error);
-        ('Erro ao salvar pessoa. Tente novamente.');
-        // You might want to set specific errors based on API response here
+      if (onSubmit) {
+        onSubmit(formData);
       }
-
+      
+      resetCadastroForm();
     }
   };
 
