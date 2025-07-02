@@ -1,4 +1,3 @@
-import React from 'react';
 import { MdEdit } from "react-icons/md";
 import { TiDelete } from "react-icons/ti";
 import { FiRefreshCw } from "react-icons/fi";

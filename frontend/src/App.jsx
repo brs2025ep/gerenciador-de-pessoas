@@ -4,6 +4,7 @@ import './styles.css';
 import CadastroPage from './CadastroPage'
 import PessoasCadastradasList from './component/PessoasCadastradasList';
 import PessoasIntegradasSearch from './component/PessoasIntegradasSearch';
+import apiService from './services/apiService';
 
 function App() {
 
@@ -70,19 +71,41 @@ function App() {
     setPessoaToEdit(pessoa);
   };
 
-  const handleSubmitPessoa = (editedPessoa) => {
-    if (editedPessoa.id) {
-      // Edição de um worker existente
-      setMockPessoasList(
-        mockPessoasList.map((pessoa) =>
-          pessoa.id === editedPessoa.id ? editedPessoa : pessoa
-        )
-      );
-    } else {
-      const newId = Math.max(...mockPessoasList.map((p) => p.id)) + 1;
-      setMockPessoasList([...mockPessoasList, { ...editedPessoa, id: newId }]);
+  const handleSubmitPessoa = async (editedPessoa) => {
+    try {
+      console.log("Pessoa cadastrada do App!");
+      if (editedPessoa.id) { // Edição de uma pessoa existente
+        // If formData has an ID, it means we are updating an existing pessoa
+        if (editedPessoa.id == -1) {
+          await apiService.updatePessoa(editedPessoa.id, editedPessoa);
+        }
+        console.log('Pessoa atualizada:', editedPessoa);
+
+        setMockPessoasList(
+          mockPessoasList.map((pessoa) =>
+            pessoa.id === editedPessoa.id ? editedPessoa : pessoa
+          )
+        );
+      } else {
+
+        if (editedPessoa.nome == "222222222222222222222222222222") {
+          const response = await apiService.createPessoa(editedPessoa);
+          console.log('Pessoa cadastrada:', response.data);
+        }
+
+        const newId = Math.max(...mockPessoasList.map((p) => p.id)) + 1;
+        const defaultStatus = 'Pendente';
+        setMockPessoasList([...mockPessoasList, { ...editedPessoa, id: newId, status: defaultStatus }]);
+      }
+
+      console.log("Pessoa cadastrada do App!");
+      console.log(mockPessoasList.length);
+      setPessoaToEdit(null); // Vai limpar o formulário e remover a pessoa editada
+    } catch (error) {
+      console.error('Erro ao salvar pessoa:', error);
+      ('Erro ao salvar pessoa. Tente novamente.');
+      // You might want to set specific errors based on API response here
     }
-    pessoaToEdit(null); // Limpa o workerToEdit após a submissão
   };
 
   return (
