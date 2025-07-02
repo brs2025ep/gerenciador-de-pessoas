@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RiResetLeftFill } from 'react-icons/ri';
 import { FaSearch } from 'react-icons/fa';
+import apiService from './services/apiService';
 
 const initialPessoaState = {
   id: null,
@@ -21,7 +22,6 @@ const CadastroPage = (
   const [formData, setFormData] = useState(initialPessoaState);
   const [errors, setErrors] = useState({});
   const [showCepSearchIcon, setShowCepSearchIcon] = useState(false);
-
 
   useEffect(() => {
     if (pessoaToEdit) {
@@ -79,21 +79,21 @@ const CadastroPage = (
     console.log("Teste");
     const [day, month, year] = formData.nascimento.split('/').map(Number);
 
-    const birthDate = new Date(year, month - 1, day);
-    const currentDate = new Date();
+    const dataNascimento = new Date(year, month - 1, day);
+    const dataHoje = new Date();
 
-    birthDate.setHours(0, 0, 0, 0);
-    currentDate.setHours(0, 0, 0, 0);
+    dataNascimento.setHours(0, 0, 0, 0);
+    dataHoje.setHours(0, 0, 0, 0);
 
     const isValidDate =
-      birthDate.getFullYear() === year &&
-      birthDate.getMonth() === month - 1 &&
-      birthDate.getDate() === day;
+      dataNascimento.getFullYear() === year &&
+      dataNascimento.getMonth() === month - 1 &&
+      dataNascimento.getDate() === day;
 
     if (!isValidDate) {
       console.log("Invalid");
       newErrors.nascimento = 'Data de nascimento inválida';
-    } else if (birthDate > currentDate) {
+    } else if (dataNascimento > dataHoje) {
       console.log("Valid");
       newErrors.nascimento = 'Data de nascimento não pode ser no futuro';
     }
@@ -103,7 +103,7 @@ const CadastroPage = (
     setFormData(initialPessoaState);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const validationErrors = validate();
@@ -111,7 +111,27 @@ const CadastroPage = (
       setErrors(validationErrors);
     } else {
       setErrors({});
-      console.log('Form Data Submitted.');
+      console.log('Trying to submit Form Data.');
+
+      try {
+        // Determine if we are creating a new pessoa or updating an existing one
+        if (formData.id) {
+          // If formData has an ID, it means we are updating an existing pessoa
+          // await apiService.updatePessoa(formData.id, formData);
+          console.log('Pessoa atualizada:', formData);
+        } else {
+          // Otherwise, we are creating a new pessoa
+          const response = await apiService.createPessoa(formData);
+          console.log('Pessoa cadastrada:', response.data);
+          // Optionally reset the form after successful creation
+          resetCadastroForm();
+        }
+      } catch (error) {
+        console.error('Erro ao salvar pessoa:', error);
+        ('Erro ao salvar pessoa. Tente novamente.');
+        // You might want to set specific errors based on API response here
+      }
+
     }
   };
 
