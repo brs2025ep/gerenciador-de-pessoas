@@ -3,7 +3,6 @@ package com.example.backend.infrastructure.dto;
 import com.example.backend.domain.model.Endereco;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Getter
