@@ -21,7 +21,7 @@ public class GetPessoaUseCase {
      * @return Optional de Pessoa.
      */
     public Optional<Pessoa> execute(Integer id) {
-        log.info("Obtendo pessoa de CPF: {}", id);
+        log.info("Obtendo pessoa de ID: {}", id);
         return pessoaRepository.findById(id);
     }
 }

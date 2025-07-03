@@ -25,7 +25,7 @@ public class UpdatePessoaUseCase {
      * @return Optional da model Pessoa.
      */
     public Pessoa execute(Integer id, Pessoa editedPessoa) {
-        log.info("Atualizando pessoa de CPF: {}", id);
+        log.info("Atualizando pessoa de ID: {}", id);
         
         Optional<Pessoa> updatedPessoa = pessoaRepository.findById(id).map(existing -> {
             existing.setNome(editedPessoa.getNome());

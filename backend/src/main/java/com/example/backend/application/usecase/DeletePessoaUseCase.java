@@ -18,7 +18,7 @@ public class DeletePessoaUseCase {
      * @return O domain model da pessoa salva.
      */
     public void execute(Integer id) {
-        log.info("Removendo pessoa de CPF: {}", id);
+        log.info("Removendo pessoa de ID: {}", id);
         pessoaRepository.deleteById(id);
     }
 }
