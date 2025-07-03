@@ -26,7 +26,6 @@ public class Endereco {
     private Pessoa pessoa;
 
     @Column(nullable = true)
-    @Size(min = 8, max = 8, message = "O CEP deve ter 8 dígitos.")
     private Integer cep;
 
     @Column(nullable = true)

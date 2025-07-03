@@ -36,6 +36,7 @@ public class CreatePessoaUseCase {
             endereco.setCidade("");
             endereco.setCep(0);
             endereco.setNumero(0);
+            pessoa.setEndereco(endereco);
         } else {
             Endereco endereco = pessoa.getEndereco();
             endereco.setPessoa(null);

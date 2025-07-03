@@ -1,6 +1,8 @@
 package com.example.backend.infrastructure.dto;
 
 import com.example.backend.domain.model.Endereco;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -10,7 +12,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class EnderecoRequest {
-    @Size(min = 8, max = 8, message = "O CEP deve ter 8 dígitos.")
+    @Min(value = 1001000, message = "O CEP deve ter 8 dígitos (mínimo 10000000).")
+    @Max(value = 99999999, message = "O CEP deve ter 8 dígitos (máximo 99999999).")
     private Integer cep;
     private String rua;
     private Integer numero;
