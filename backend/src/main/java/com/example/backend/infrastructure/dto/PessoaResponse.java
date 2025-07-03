@@ -39,9 +39,10 @@ public class PessoaResponse {
 
         if (domain.getSituacaoIntegracao() != null) {
             try {
-                pessoaResponseBuilder.situacaoIntegracao(domain.getSituacaoIntegracao().toString());
-            } catch (IllegalArgumentException e) {
-                log.warn("Invalid SituacaoIntegracao value encountered in domain model: {}", domain.getSituacaoIntegracao(), e);
+                pessoaResponseBuilder.situacaoIntegracao(domain.getSituacaoIntegracao().getValue());
+            } catch (Exception e) { // Catch more general exception if toString() or getValue() could fail
+                log.error("Erro ao converter SituacaoIntegracao do domínio para resposta. Valor inválido: {}", domain.getSituacaoIntegracao(), e);
+                pessoaResponseBuilder.situacaoIntegracao("PENDENTE");
             }
         }
 
