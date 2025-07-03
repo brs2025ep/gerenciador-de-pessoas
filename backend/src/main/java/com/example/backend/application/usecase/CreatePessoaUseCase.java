@@ -62,6 +62,20 @@ public class CreatePessoaUseCase {
             pessoa.setEndereco(endereco);
         }
 
+        if (pessoa.getEndereco() == null) {
+            Endereco endereco = new Endereco();
+            endereco.setRua("");
+            endereco.setEstado("");
+            endereco.setCidade("");
+            endereco.setCep(0);
+            endereco.setNumero(0);
+        } else {
+            Endereco endereco = pessoa.getEndereco();
+            endereco.setPessoa(null);
+            endereco.setId(null);
+            pessoa.setEndereco(endereco);
+        }
+
         Pessoa createdPessoa = pessoaRepository.save(pessoa);
         log.info("Pessoa criada. (id: {}, nome: {})",  createdPessoa.getId(), pessoa.getNome());
 
