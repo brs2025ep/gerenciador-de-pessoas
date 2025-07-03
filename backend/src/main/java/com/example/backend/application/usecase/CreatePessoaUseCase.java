@@ -5,9 +5,13 @@ import com.example.backend.domain.model.Endereco;
 import com.example.backend.domain.model.Pessoa;
 import com.example.backend.domain.repository.PessoaRepository;
 import com.example.backend.infrastructure.adapter.in.web.exception.ResourceAlreadyExistsException;
+import com.example.backend.infrastructure.adapter.in.web.exception.UnprocessableEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,12 @@ public class CreatePessoaUseCase {
      */
     public Pessoa execute(Pessoa pessoa) {
         log.info("Salvando pessoa: {}", pessoa.getNome());
+
+        if (pessoa.getNascimento().isAfter(LocalDate.now())) {
+            log.error("Data de nascimento não pode ser no futuro");
+            throw new UnprocessableEntity("Data e hora maiores que a data e hora atuais");
+        }
+
         if (pessoa.getCpf() != null && pessoaRepository.existsByCpf(pessoa.getCpf())) {
             throw new ResourceAlreadyExistsException("Já existe uma pessoa cadastrada com este CPF.");
         }

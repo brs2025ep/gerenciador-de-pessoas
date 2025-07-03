@@ -37,11 +37,8 @@ public class PessoaController {
     private final DeletePessoaUseCase deletePessoaUseCase;
 
     /**
-     * Salva uma nova pessoa.
-     *
-     * @param request O PessoaRequest DTO contendo informações da Pessoa.
-     * @return ResponseEntity with the created PessoaResponse DTO.
-     * @throws ResourceAlreadyExistsException Exceção lançada ao tentar criar Pessoa já existente.
+     * Trata a request para gravar uma nova pessoa.
+     * Esse endpoit deve processar a PessoaRequest request e com repository persistir para o banco de dados.
      */
     @Operation(summary = "Criar uma nova pessoa")
     @ApiResponses(value = {
@@ -58,10 +55,6 @@ public class PessoaController {
 
     /**
      * Obtém a Pessoa pelo ID.
-     *
-     * @param id O ID da Pessoa a ser obitda.
-     * @return ResponseEntity com o DTO PessoaResponse.
-     * @throws ResourceNotFoundException se a Pessoa não foi encontrada.
      */
     @Operation(summary = "Obter uma pessoa por ID")
     @ApiResponses(value = {
@@ -81,10 +74,6 @@ public class PessoaController {
 
     /**
      * Obter todas as pessoas com paginação.
-     *
-     * @param page O número da página ( 0, por padrão).
-     * @param size O número de registros de Pessoa em cada página (10, por padrão).
-     * @return ResponseEntity com uma lista de registros de PessoaResponse DTOs.
      */
     @Operation(summary = "Obter todas pessoas com paginação")
     @ApiResponses(value = {
@@ -106,10 +95,6 @@ public class PessoaController {
 
     /**
      * Atualiza uma pessoa já existente.
-     * @param id O ID da Pessoa a ser atualizada.
-     * @param request O DTO PessoaRequest DTO com informações atualizdaas da Pessoa.
-     * @return ResponseEntity com o DTO PessoaResponse contendo informações atualizadas da Pessoa.
-     * @throws ResourceNotFoundException exceção estourada quano a Pessoa não pôde ser encontrada.
      */
     @Operation(summary = "Atualiza uma pessoa existente")
     @ApiResponses(value = {
@@ -133,9 +118,6 @@ public class PessoaController {
 
     /**
      * Remove uma pessoa por ID.
-     * @param id O ID da pessoa a ser removida.
-     * @return ResponseEntity indicando sucesso.
-     * @throws ResourceNotFoundException Exceção estourada no caso em que a pessoa não pôde for encontrada.
      */
     @Operation(summary = "Remover uma pessoa por ID")
     @ApiResponses(value = {

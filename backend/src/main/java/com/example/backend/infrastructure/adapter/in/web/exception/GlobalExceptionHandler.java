@@ -43,9 +43,9 @@ public class GlobalExceptionHandler {
      * Essa exceção deve ser lançada na tentativa de encontrar um recurso não existente.
      * Deve retornar Status code 404 Not FOUND.
      */
-    @ExceptionHandler(HttpClientErrorException.UnprocessableEntity.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ResponseEntity<Object> handleUnprocessableEntity(ResourceNotFoundException ex, WebRequest request){
+    @ExceptionHandler(HttpClientErrorException.NotFound.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleNotFoundEntity(ResourceNotFoundException ex, WebRequest request){
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.NOT_FOUND.value());
@@ -79,9 +79,9 @@ public class GlobalExceptionHandler {
      * Essa exceção deve ser lançada na tentativa de criar um recurso com dados formatados corretamente, porém inválidos.
      * Deve retornar Status code 422 UnprocessableEntity.
      */
-    @ExceptionHandler(HttpClientErrorException.UnprocessableEntity.class)
+    @ExceptionHandler(UnprocessableEntity.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ResponseEntity<String> handleUnprocessableEntity(HttpClientErrorException.UnprocessableEntity e){
+    public ResponseEntity<String> handleUnprocessableEntity(UnprocessableEntity e){
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Erro: " + e.getMessage());
     }
 
@@ -97,7 +97,7 @@ public class GlobalExceptionHandler {
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
         body.put("error", "Internal Server Error");
-        body.put("message", "An unexpected error occurred: " + ex.getMessage());
+        body.put("message", "Ocorreu um erro inesperado: " + ex.getMessage());
         body.put("path", request.getDescription(false).replace("uri=", ""));
 
         // Log the exception for debugging purposes
