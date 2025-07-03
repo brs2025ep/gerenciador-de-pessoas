@@ -30,9 +30,18 @@ public class CreatePessoaUseCase {
     public Pessoa execute(Pessoa pessoa) {
         log.info("Salvando pessoa: {}", pessoa.getNome());
 
-        if (pessoa.getNascimento().isAfter(LocalDate.now())) {
-            log.error("Data de nascimento não pode ser no futuro");
-            throw new UnprocessableEntity("Data e hora maiores que a data e hora atuais");
+        if (pessoa.getNascimento() != null) {
+            if (pessoa.getNascimento().isAfter(LocalDate.now())) {
+                log.error("A data de nascimento informada está no futuro!");
+                throw new UnprocessableEntity("A data de nascimento informada está no futuro!");
+            }
+        }
+
+        if (pessoa.getCpf() != null) {
+            if (!pessoa.getCpf().matches("^\\d{11}$")) {
+                log.error("O CPF deve conter exatamente 11 números!");
+                throw new UnprocessableEntity("O CPF deve conter exatamente 11 números!");
+            }
         }
 
         if (pessoa.getCpf() != null && pessoaRepository.existsByCpf(pessoa.getCpf())) {
