@@ -39,8 +39,8 @@ public class CreatePessoaUseCase {
 
         if (pessoa.getCpf() != null) {
             if (!pessoa.getCpf().matches("^\\d{11}$")) {
-                log.error("O CPF deve conter exatamente 11 números!");
-                throw new UnprocessableEntity("O CPF deve conter exatamente 11 números!");
+                log.error("O CPF deve conter exatamente 11 dígitos!");
+                throw new UnprocessableEntity("O CPF deve conter exatamente 11 dígitos!");
             }
         }
 

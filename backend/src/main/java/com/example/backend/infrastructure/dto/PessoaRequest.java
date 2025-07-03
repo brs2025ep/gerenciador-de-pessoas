@@ -21,7 +21,7 @@ public class PessoaRequest {
     @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
     private LocalDate nascimento;
 
-    @Size(min = 11, max = 11, message = "O CPF deve ter 11 caracteres.")
+    @Size(min = 11, max = 11, message = "O CPF deve ter 11 dígitos.")
     private String cpf;
 
     @Email(message = "Email format is invalid")
