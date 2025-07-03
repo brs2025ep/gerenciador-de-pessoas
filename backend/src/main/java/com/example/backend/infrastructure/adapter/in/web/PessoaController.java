@@ -3,7 +3,6 @@ package com.example.backend.infrastructure.adapter.in.web;
 import com.example.backend.application.usecase.*;
 import com.example.backend.domain.model.Pessoa;
 import com.example.backend.infrastructure.adapter.in.web.exception.ResourceNotFoundException;
-import com.example.backend.infrastructure.adapter.in.web.exception.ResourceAlreadyExistsException;
 import com.example.backend.infrastructure.dto.PessoaRequest;
 import com.example.backend.infrastructure.dto.PessoaResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,7 +43,8 @@ public class PessoaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Pessoa criada com sucesso!"),
             @ApiResponse(responseCode = "400", description = "Solicitação inválida!"),
-            @ApiResponse(responseCode = "409", description = "Conflito! A pessoa já existe")
+            @ApiResponse(responseCode = "409", description = "Conflito! A pessoa já existe"),
+            @ApiResponse(responseCode = "422", description = "Erro! A criar pessoa possui dados inválidos"),
     })
     @PostMapping
     public ResponseEntity<PessoaResponse> createPessoa(@Valid @RequestBody PessoaRequest request) {
