@@ -24,7 +24,7 @@ public class PessoaRequest {
     @Size(min = 11, max = 11, message = "O CPF deve ter 11 dígitos.")
     private String cpf;
 
-    @Email(message = "Email format is invalid")
+    @Email(message = "O Email formato não atende ao formato de email.")
     private String email;
 
     private EnderecoRequest endereco;
