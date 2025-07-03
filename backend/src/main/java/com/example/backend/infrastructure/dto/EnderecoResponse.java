@@ -1,6 +1,8 @@
 package com.example.backend.infrastructure.dto;
 
 import com.example.backend.domain.model.Endereco;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Getter
@@ -9,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class EnderecoResponse {
-    private Integer cep;
+    private String cep;
     private String rua;
     private Integer numero;
     private String cidade;
@@ -21,8 +23,11 @@ public class EnderecoResponse {
      * @return EnderecoResponse Retorno esperado.
      */
     public static EnderecoResponse fromDomain(Endereco domain) {
+        // Formata o cep para ter 8 dígitos, incluindo zero na frente para preencher.
+        String formattedCep = String.format("%08d", domain.getCep());
+
         return EnderecoResponse.builder()
-                .cep(domain.getCep())
+                .cep(formattedCep)
                 .rua(domain.getRua())
                 .numero(domain.getNumero())
                 .cidade(domain.getCidade())
