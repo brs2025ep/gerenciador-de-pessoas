@@ -42,10 +42,10 @@ public class CreatePessoaUseCase {
                 log.error("O CPF deve conter exatamente 11 dígitos!");
                 throw new UnprocessableEntity("O CPF deve conter exatamente 11 dígitos!");
             }
-        }
 
-        if (pessoa.getCpf() != null && pessoaRepository.existsByCpf(pessoa.getCpf())) {
-            throw new ResourceAlreadyExistsException("Já existe uma pessoa cadastrada com este CPF.");
+            if (pessoaRepository.existsByCpf(pessoa.getCpf())) {
+                throw new ResourceAlreadyExistsException("Já existe uma pessoa cadastrada com este CPF.");
+            }
         }
 
         if (pessoa.getEndereco() == null) {
