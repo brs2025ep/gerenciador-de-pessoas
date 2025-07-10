@@ -3,6 +3,7 @@ package com.example.backend.infrastructure.dto;
 import com.example.backend.domain.model.PessoaCadastro;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -16,6 +17,8 @@ import java.time.LocalDate;
 @Builder
 public class PessoaRequest {
     @NotBlank(message = "É obrigatório ter nome da Pessoa")
+    @Pattern(regexp = "^([A-Z][a-z]+(?:\\s[A-Z][a-z]+)+)$",
+             message = "O nome deve ter ao menos 2 palavras e cada palavra deve começar com letra maiúscula.")
     private String nome;
 
     @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
