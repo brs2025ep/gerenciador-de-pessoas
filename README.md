@@ -59,15 +59,18 @@ A integração recebe a Pessoa Cadastrada da requisição vinda da aplicação b
 ### Frontend
 O frontend é a interface visual para gerir Pessoas através de uma aplicação web, se comunica com outros sistemas através de protocolo HTTP e foi  desenvolvida com JavaScript e framework React. Apresenta um formulário de Cadastro de Pessoa, caixa de busca para Busca de Pessoa Integrada e Listagem de Pessoa com ações individuais(editar, excluir e integrar).
 
-// TODO: Adicionar interface
 
-#### Cadastro de Pessoa
+#### Tela Cadastro de Pessoa
 É um formulário para Cadastro de Pessoa, requer o nome obrigatoriamente e exige que os campos preenchidos atendam às [Regras de Validação](#regras-de-validação).
 Ao preencher o CEP, será realizada a validação do CEP em API externa, caso o CEP não possa ser encontrado, o cep será definido como 00000000 e os outros campos do Endereço serão obrigatórios.
 Se o CPF estiver preenchido e já existe uma Pessoa Cadastrada com o CPF informado, não será possível fazer um novo cadastro.
 
+![Tela Cadastrar Pessoa](docs/design1.png)
+
 #### Busca de Pessoa Integrada
 É uma seção dedicada à pesquisa de uma pessoa integrada pelo cpf, vai exibir, além dos dados de inseridos no formulário Cadastro pessoa, a data de integração e a data da última atualização.
+
+![Telas Consultar Pessoa Integrada](docs/design3.png)
 
 #### Listagem de Pessoa
 - A tabela deve listar todas as pessoas cadastradas no banco de dados.
@@ -78,6 +81,8 @@ Se o CPF estiver preenchido e já existe uma Pessoa Cadastrada com o CPF informa
 - Botão Editar para carregar os dados da pessoa no formulário.
 - Botão de Remover para remover os dados da pessoa localmente e excluir a pessoa remotamente.
 - Botão de Integrar para captar o ID da Pessoa Cadastrada, verificar todos os dados preenchidos e enviar para ser atualizada remotamente, garantindo a integração.
+
+![Tela Pessoas Cadastradas](docs/design2.png)
 
 ####
 
