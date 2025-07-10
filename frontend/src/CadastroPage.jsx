@@ -20,7 +20,8 @@ const CadastroPage = (
 ) => {
   const [formData, setFormData] = useState(initialPessoaState);
   const [errors, setErrors] = useState({});
-  const [showCepSearchIcon, setShowCepSearchIcon] = useState(false);
+  const [isCepSearchIconVisible, setIsCepSearchIconVisible] = useState(false);
+  const [isAddressFillByCepActive, setIsAddressFillByCepActive] = useState(true);
 
   useEffect(() => {
     if (pessoaToEdit) {
@@ -42,11 +43,11 @@ const CadastroPage = (
   }, [pessoaToEdit]);
 
   const displayCepSearchIcon = () => {
-    setShowCepSearchIcon(true);
+    setIsCepSearchIconVisible(true);
   };
 
   const hideCepSearchIcon = () => {
-    setShowCepSearchIcon(false);
+    setIsCepSearchIconVisible(false);
   };
 
   const validate = () => {
@@ -58,17 +59,28 @@ const CadastroPage = (
     }
 
     if (formData.cpf.trim()) {
-
       if (formData.cpf.length < 10) {
         newErrors.cpf = 'CPF inválido';
       }
-
     }
 
     if (formData.email.trim()) {
       if (!/\S+@\S+\.\S+/.test(formData.email)) {
         newErrors.email = 'Email é inválido';
       }
+    }
+
+    if (formData.cep.trim()) {
+      if (formData.cep.length < 8) {
+        newErrors.cep = 'CEP precista ter 8 dígitos.'
+      }
+    }
+
+    if (!isAddressFillByCepActive) { // Validação: Se o CEP não for encontrado, CIDADE, ESTADO, RUA E NÚMERO PASSAM A SER CAMPOS OBRIGATÓRIOS.
+      if (!formData.cidade.trim()) newErrors.cidade = 'Cidade é obrigatório';
+      if (!formData.estado.trim()) newErrors.cidade = 'Estado é obrigatório';
+      if (!formData.rua.trim()) newErrors.cidade = 'Rua é obrigatória';
+      if (!formData.numero.trim()) newErrors.cidade = 'Número é obrigatório';
     }
 
     return newErrors;
@@ -95,6 +107,63 @@ const CadastroPage = (
     }
   }
 
+  const cepCodeValidation = async () => {
+    console.log("Validando cep: " + formData.cep);
+    try {
+      const response = await apiService.checkCep(cepValue);
+
+      if (response.status === 200) {
+        if (response.data.erro === "true") {
+          console.error("CEP não encontrado! Verifique o CEP.");
+
+          // Limpar campos de endereço se o CEP não for encontrado
+          setFormData(prevFormData => ({
+            ...prevFormData,
+            rua: '',
+            cidade: '',
+            estado: '',
+          }));
+
+        } else {
+          // Definir autopreenchimento com CEP ativo para bloquear edição de formData.rua, formData.cidade e formData.estado
+          setIsAddressFillByCepActive(true);
+
+          // Preenche os campos do formulário com os dados da resposta
+          setFormData(prevFormData => ({
+            ...prevFormData,
+            rua: response.data.logradouro || '', // "logradouro" é referente a Rua/Avenida/Praça e etc...
+            cidade: response.data.localidade || '',
+            estado: response.data.estado || '',
+          }));
+        }
+      } else {
+        console.error(`Erro na requisição ViaCEP: Status ${response.status}`);
+      }
+    } catch (error) {
+      // Definir autopreenchimento com CEP desativado
+      setIsAddressFillByCepActive(false);
+
+      // Trata erros de requisição (ex: 400 Bad Request, problemas de rede)
+      if (error.response) {
+        // Erro de resposta do servidor (ex: 400)
+        console.error(`Erro na requisição ViaCEP: Status ${error.response.status} - ${error.response.statusText}`);
+      } else if (error.request) {
+        // A requisição foi feita, mas não houve resposta
+        console.error("Erro na requisição ViaCEP: Nenhuma resposta recebida.");
+      } else {
+        // Algo aconteceu na configuração da requisição que disparou um erro
+        console.error("Erro na requisição ViaCEP:", error.message);
+      }
+      // Opcional: Limpar campos de endereço em caso de erro
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        rua: '',
+        cidade: '',
+        estado: '',
+      }));
+    }
+  }
+
   const resetCadastroForm = () => {
     setFormData(initialPessoaState);
   };
@@ -112,7 +181,7 @@ const CadastroPage = (
       if (onSubmit) {
         onSubmit(formData);
       }
-      
+
       resetCadastroForm();
     }
   };
@@ -124,16 +193,14 @@ const CadastroPage = (
 
     if (name === 'nome') {
       formattedValue = value
-        .split(' ') // Split the string into an array of words
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize first letter, lowercase rest
-        .join(' '); // Join the words back into a string
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
     }
 
     if (name === 'nascimento') {
-      // Remove all non-digit characters first
       formattedValue = value.replace(/\D/g, '');
 
-      // Apply formatting
       if (formattedValue.length > 2) {
         formattedValue = formattedValue.substring(0, 2) + '/' + formattedValue.substring(2);
       }
@@ -141,22 +208,18 @@ const CadastroPage = (
         formattedValue = formattedValue.substring(0, 5) + '/' + formattedValue.substring(5);
       }
 
-      // Limit to 10 characters (dd/MM/YYYY)
       if (formattedValue.length > 10) {
         formattedValue = formattedValue.substring(0, 10);
       }
     }
 
-    if (name === 'cep') { // New logic for CEP field
-      // Remove all non-digit characters
+    if (name === 'cep') {
       formattedValue = value.replace(/\D/g, '');
 
-      // Limit to 8 digits
       if (formattedValue.length > 8) {
         formattedValue = formattedValue.substring(0, 8);
       }
 
-      // Apply CEP format (00000-000) only if 8 digits are present
       if (formattedValue.length === 8) {
         formattedValue = formattedValue.replace(/(\d{5})(\d{3})/, '$1-$2');
         displayCepSearchIcon();
@@ -166,13 +229,9 @@ const CadastroPage = (
     }
 
     if (name === 'cpf') {
-      // 1. Remove any non-digit characters
       const digitsOnly = value.replace(/\D/g, '');
-
-      // 2. Limit to 11 digits
       const limitedDigits = digitsOnly.substring(0, 11);
 
-      // 3. Apply Brazilian CPF format 000.000.000-00
       if (limitedDigits.length > 0) {
         formattedValue = limitedDigits.replace(
           /^(\d{3})(\d{3})(\d{3})(\d{2})$/,
@@ -187,7 +246,6 @@ const CadastroPage = (
       ...prevFormData,
       [name]: formattedValue
     }));
-    // Clear the error for the current field as the user types
     if (errors[name]) {
       setErrors(prevErrors => {
         const newErrors = { ...prevErrors };
@@ -260,10 +318,9 @@ const CadastroPage = (
                   value={formData.cep}
                   placeholder="Digite o CEP da Pessoa.."
                   onChange={handleChange} />
-                {showCepSearchIcon && (
+                {isCepSearchIconVisible && (
                   <div
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
-                    onClick={() => alert('Ícone de Busca foi acionado: ' + formData.cep)}
+                    onClick={() => cepCodeValidation()}
                   >
                     <FaSearch /> Buscando
                   </div>
@@ -279,7 +336,8 @@ const CadastroPage = (
                   name="rua"
                   value={formData.rua}
                   placeholder="Digita a Rua da Pessoa.."
-                  onChange={handleChange} />
+                  onChange={handleChange}
+                  readOnly={isAddressFillByCepActive} />
                 {errors.rua && <p className="text-red-500 text-sm">{errors.rua}</p>}
               </div>
               <div className="form-row-group">
@@ -302,7 +360,8 @@ const CadastroPage = (
                   name="cidade"
                   value={formData.cidade}
                   placeholder="Digite o nome da Cidade da Pessoa..."
-                  onChange={handleChange} />
+                  onChange={handleChange}
+                  readOnly={isAddressFillByCepActive} />
                 {errors.cidade && <p className="text-red-500 text-sm">{errors.cidade}</p>}
               </div>
               <div className="form-row-group">
@@ -312,7 +371,9 @@ const CadastroPage = (
                   name="estado"
                   value={formData.estado}
                   placeholder="Digite o nome do Estado da Pessoa..."
-                  onChange={handleChange} />
+                  onChange={handleChange}
+                  readOnly={isAddressFillByCepActive}
+                />
                 {errors.estado && <p className="text-red-500 text-sm">{errors.estado}</p>}
               </div>
             </div>
@@ -322,10 +383,8 @@ const CadastroPage = (
           >
             {formData.id ? 'Salvar Mudanças' : 'Salvar'}
           </button>
-
-
           {formData.id && (
-            <> {/* Fragmento para agrupar o botão e o separador */}
+            <>
               Cancelar<RiResetLeftFill
                 className="action-icon"
                 onClick={() => resetCadastroForm()}
