@@ -1,6 +1,6 @@
 # gerenciador-de-pessoas
 Projeto demonstração de uma solução de gerenciamento de pessoas (Pessoas Cadastradas e Pessoas Integradas).
-- Backend: aplicação desenvolvida com Java 21 e Spring Boot que disponibiliza uma api para gerenciar Pessoas, se integra com a aplicação Api e se comunicar com o banco de dados cadastro_db. 
+- Backend: aplicação desenvolvida com Java 21 e Spring Boot que disponibiliza uma api para gerenciar Pessoas, se integra com a aplicação Api e se comunica com o banco de dados cadastro_db. 
 - Api : aplicação backend desenvolvida com Java 21 e Spring Boot recebe requisições da aplicação Backend para gerenciar Pessoas Integradas e se comunica com o banco de dados integracao_db.
 - Frontend: aplicação desenvolvida com React e JavaScript.
 Uma Pessoa Cadastrada é a Pessoa com cadastro salvo no banco de dados de cadastro e possui ao menos o nome atendendo às regras de validação.
@@ -522,5 +522,5 @@ Se o CPF estiver preenchido e já existe uma Pessoa Cadastrada com o CPF informa
 - Email: deve atender ao formato de email. Exemplo: meu-email@gmail.com
 - CPF: deve ser único e ser composto de exatamente 11 dígitos e possui máscara 000.000.000-00. 
 - Endereço: O endereço completo é composto por CEP(número inteiro com máscara 00000-000), Rua(nome do logradouro), Número(número da residência), Cidade e Estado.
-- Informações requeridas para Pessoa Cadastro: O nome é a única informação obrigatória.
+- Informações requeridas para Pessoa Cadastro: O nome é a única informação obrigatória. Caso o CEP seja inserido e ocorra uma falha ao obter o CEP, o campo CEP será definido como 00000-000 e passarão a ser obrigatórios os campos rua, número, cidade e estado.
 - Informações requeridas para Pessoa Integrada: Todas as informações são obrigatórias e o CEP precisa ser verificado como válido em API externa.
