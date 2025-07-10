@@ -8,7 +8,7 @@ services:
     env_file:
       - ../backend.env
     depends_on:
-      - backend-db
+      - cadastro-db
       - api
     volumes:
     - backend_logs:/app/logs

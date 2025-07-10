@@ -22,7 +22,7 @@ public class PessoaCadastroResponse {
     private String situacaoIntegracao;
 
     /**
-     * Convert a model PessoaCadastro em DTO PessoaResponse.
+     * Converte a model PessoaCadastro em DTO PessoaResponse.
      * @param domain A model PessoaCadastro.
      * @return PessoaResponse A resposta a ser retornada.
      */
@@ -39,7 +39,7 @@ public class PessoaCadastroResponse {
         if (domain.getSituacaoIntegracao() != null) {
             try {
                 pessoaResponseBuilder.situacaoIntegracao(domain.getSituacaoIntegracao().getValue());
-            } catch (Exception e) { // Catch more general exception if toString() or getValue() could fail
+            } catch (Exception e) {
                 log.error("Erro ao converter SituacaoIntegracao do domínio para resposta. Valor inválido: {}", domain.getSituacaoIntegracao(), e);
                 pessoaResponseBuilder.situacaoIntegracao("PENDENTE");
             }

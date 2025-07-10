@@ -9,6 +9,7 @@ import apiService from './services/apiService';
 function App() {
   const [pessoaToEdit, setPessoaToEdit] = useState(null);
   const [mockPessoasList, setMockPessoasList] = useState([]);
+  const [currentPessoaIntegrada, setCurrentPessoaIntegrada] = useState(null);
 
   const loadMockPessoas = () => {
     const mockData = [
@@ -74,44 +75,95 @@ function App() {
     const newPessoasList = response.data;
     console.log(newPessoasList);
 
-
     setMockPessoasList(newPessoasList);
   };
 
-  const handleEditPessoa = (pessoaId) => {
-    const pessoa = mockPessoasList.find((p) => p.id === pessoaId);
-    // TODO: Recuperar Pessoa fazendo requisição para a API
-    setPessoaToEdit(pessoa);
+  const handleSearchPessoaIntegrada = async (cpf) => {
+    console.log("Buscando pessoa Integrada de cpf: " + cpf);
+
+    const response = apiService.getPessoaIntegrada(cpf);
+    const pessoaIntegrada = response.data
+
+
+    setCurrentPessoaIntegrada(pessoaIntegrada);
+  }
+
+  const handleGetPessoaToEdit = async (pessoaId) => {
+    // const pessoa = mockPessoasList.find((p) => p.id === pessoaId);
+
+    // Obter dados atualizados da pessoa antes de editar
+    const response = apiService.getPessoaById(pessoaId);
+    const pessoaFromRemote = response.data;
+
+    setPessoaToEdit(pessoaFromRemote);
   };
 
   const handleDeletePessoa = (pessoaId) => {
-    // In a real application, you would call apiService.deletePessoa(pessoaId)
-    // For now, we filter it out from the mock list
-    setMockPessoasList(mockPessoasList.filter((p) => p.id !== pessoaId));
+    console.log("Removendo pessoa de id:" + pessoaId);
+    const selectedPessoa = mockPessoasList.find((p) => p.id === pessoaId);
+
+
+    try {
+
+
+      if (selectedPessoa.status === 'Sucesso') {
+        console.log("Tentando remover pessoa pelo cpf :" + selectedPessoa.cpf);
+
+        // TODO: Remover pessoa integrada
+        const response = apiService.deletePessoaIntegrada(cpfPessoaIntegrada);
+
+
+      } else {
+        // TODO: Remover pessoa cadastrada
+        const response = apiService.getPessoaById(pessoaId);
+      }
+
+    } catch (error) {
+      console.log(error);
+    };
+
+
     console.log(`Pessoa com ID ${pessoaId} removida.`);
   };
+
+  const handleIntegrarPessoa = (pessoaId) => {
+console.log("Tentando integrar pessoa de id: ", pessoaId);
+
+    try {
+      const response = apiService.getPessoaById(pessoaId);
+      const dataPessoaFromRemote = response.data;
+
+      const submitResponse = apiService.updatePessoa(
+        pessoaId,
+        dataPessoaFromRemote)
+
+      if (submitResponse.status === 200) {
+        // Se a integração foi bem sucedidade, deve atualizar a lista de Pessoas.
+        fetchPessoas();
+      } else {
+        console.log("Ocorreu algo inesperado ao tentar integrar pessoa", pessoaId);
+      }
+    } catch (error) {
+      console.log(error);
+    };
+  }
 
   const handleSubmitPessoa = async (editedPessoa) => {
     try {
       console.log("Pessoa cadastrada do App!");
-      if (editedPessoa.id) { // Edição de uma pessoa existente
-        // If formData has an ID, it means we are updating an existing pessoa
+      if (editedPessoa.id) {
         if (editedPessoa.id != -1) {
           await apiService.updatePessoa(editedPessoa.id, editedPessoa);
         }
         console.log('Pessoa atualizada:', editedPessoa);
-
         setMockPessoasList(
           mockPessoasList.map((pessoa) =>
             pessoa.id === editedPessoa.id ? editedPessoa : pessoa
           )
         );
       } else {
-
-        if (editedPessoa.nome != "222222222222222222222222222222") {
-          const response = await apiService.createPessoa(editedPessoa);
-          console.log('Pessoa cadastrada remotamente:', response.data);
-        }
+        const response = await apiService.createPessoa(editedPessoa);
+        console.log('Pessoa cadastrada remotamente:', response.data);
 
         let newId = Math.max(...mockPessoasList.map((p) => p.id)) + 1;
 
@@ -124,11 +176,10 @@ function App() {
       }
 
       console.log("Pessoas length: ", mockPessoasList.length);
-      setPessoaToEdit(null); // Vai limpar o formulário e remover a pessoa editada
+      setPessoaToEdit(null);
     } catch (error) {
       console.error('Erro ao salvar pessoa:', error);
       ('Erro ao salvar pessoa. Tente novamente.');
-      // You might want to set specific errors based on API response here
     }
   };
 
@@ -145,10 +196,13 @@ function App() {
           onClick={() => fetchPessoas(null)}>Fetch Pessoas (Remote)</button>
         <PessoasCadastradasList
           pessoas={mockPessoasList}
-          onEdit={handleEditPessoa}
+          onEdit={handleGetPessoaToEdit}
           oDelete={handleDeletePessoa}
+          onIntegrar={handleIntegrarPessoa}
         />
-        <PessoasIntegradasSearch />
+        <PessoasIntegradasSearch
+          pessoaIntegrada={currentPessoaIntegrada}
+          onSearch={handleSearchPessoaIntegrada} />
       </div>
     </>
   )
