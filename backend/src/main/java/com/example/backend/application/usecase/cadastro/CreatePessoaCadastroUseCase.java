@@ -30,16 +30,14 @@ public class CreatePessoaCadastroUseCase {
         log.info("Salvando pessoa: {}", pessoaCadastro.getNome());
 
         if (pessoaCadastro.getNascimento() != null) {
-            if (pessoaCadastro.getNascimento().isAfter(LocalDate.now())) {
+            if (pessoaCadastro.getNascimento().isAfter(LocalDate.now())) { // Verificar se a data de nascimento é futura
                 log.error("A data de nascimento informada está no futuro!");
                 throw new UnprocessableEntity("A data de nascimento informada está no futuro!");
             }
         }
 
-        boolean hasCpf = false;
-
         if (pessoaCadastro.getCpf() != null) {
-            if (!pessoaCadastro.getCpf().matches("^\\d{11}$")) {
+            if (!pessoaCadastro.getCpf().matches("^\\d{11}$")) {  // Verificar se o CPF tem 11 dígitos
                 log.error("O CPF deve conter exatamente 11 dígitos!");
                 throw new UnprocessableEntity("O CPF deve conter exatamente 11 dígitos!");
             }
@@ -47,10 +45,9 @@ public class CreatePessoaCadastroUseCase {
             if (pessoaRepository.existsByCpf(pessoaCadastro.getCpf())) {
                 throw new ResourceAlreadyExistsException("Já existe uma pessoa cadastrada com este CPF.");
             }
-            hasCpf = true;
         }
 
-        if (pessoaCadastro.getEndereco() == null) {
+        if (pessoaCadastro.getEndereco() == null) { // Verificar se o Endereço é nulo
             Endereco endereco = new Endereco();
             endereco.setRua("");
             endereco.setEstado("");
@@ -65,10 +62,21 @@ public class CreatePessoaCadastroUseCase {
             pessoaCadastro.setEndereco(endereco);
         }
 
+        boolean isPessoaCadastroComplete = // Verificar se a Pessoa tem todas as informações preenchidas
+                pessoaCadastro.getNome() != null && !pessoaCadastro.getNome().isEmpty() &&
+                        pessoaCadastro.getCpf() != null && pessoaCadastro.getCpf().length() == 11 &&
+                        pessoaCadastro.getEmail() != null && !pessoaCadastro.getEmail().isEmpty() &&
+                        pessoaCadastro.getEndereco() != null &&
+                        pessoaCadastro.getEndereco().getCep() != null &&
+                        pessoaCadastro.getEndereco().getRua() != null && !pessoaCadastro.getEndereco().getRua().isEmpty() &&
+                        pessoaCadastro.getEndereco().getCidade() != null && !pessoaCadastro.getEndereco().getCidade().isEmpty() &&
+                        pessoaCadastro.getEndereco().getEstado() != null && !pessoaCadastro.getEndereco().getCidade().isEmpty() &&
+                        pessoaCadastro.getEndereco().getNumero() != null;
+
         PessoaCadastro createdPessoaCadastro = pessoaRepository.save(pessoaCadastro);
         log.info("Pessoa criada. (id: {}, nome: {})",  createdPessoaCadastro.getId(), pessoaCadastro.getNome());
 
-        if (hasCpf) {
+        if (isPessoaCadastroComplete) {
             pessoaEventPort.sendPessoaCadastroForIntegracao(createdPessoaCadastro);
             log.debug("Pessoa de cpf {} enviada para validação na API.", createdPessoaCadastro.getCpf());
         }
