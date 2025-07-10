@@ -24,6 +24,14 @@ const apiService = {
   deletePessoa: (id) => api.delete(`/pessoa/${id}`),
   getPessoaIntegrada: (cpf) => api.delete(`/pessoa/${cpf}/integracao`),
   deletePessoaIntegrada: (cpf) => api.delete(`/pessoa/${cpf}/integracao`),
+  validateCep: async (cep) => {
+    try {
+      const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
 };
 
 export default apiService;
